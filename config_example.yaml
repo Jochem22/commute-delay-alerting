@@ -15,8 +15,8 @@
        - 2
        - 3
      departure: '08:00' # script monitors route from 2 hours before and 2 hours after departure time
-     distance: 37 # distance of route without reroutes taken from Waze or Google Maps
-     duration: 32 # duration of route without traffic taken from Waze or Google Maps
+     distance: 37 # distance of original route without reroutes taken from https://www.waze.com/live-map/
+     duration: 32 # duration of route without traffic taken from https://www.waze.com/live-map/
    routeb:
      origin: utrecht
      destination: amsterdam

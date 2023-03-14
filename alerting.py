@@ -8,7 +8,7 @@ SECRET = dotenv_values()
 
 class Alerting:
     """
-    Class for setting and sending alerts regarding delay or reroute of commute
+    Class for setting and sending alerts regarding delay of commute
 
     Attributes
     ----------
@@ -18,15 +18,15 @@ class Alerting:
         origin name set in config
     destination : str
         destination name set in config
-    duration_realtime : int
+    duration_realtime : float
         duration of route in real time including traffic jams
-    duration_delay : int
+    duration_delay : float
         total delay of route in minutes in real time used to check for delay
-    distance_static : int
+    distance_static : float
         distance of route in km's set in config
-    distance_realtime : int
-        distance of route in km's in real time used to check for reroute
-    route_description : int
+    distance_realtime : float
+        distance of route in km's in real time used to check for matching route in config file
+    route_description : str
         short description of route
     """
     def __init__(self, max_delay, origin, destination, duration_realtime, duration_delay, distance_static, distance_realtime, route_description):
@@ -46,13 +46,6 @@ class Alerting:
         else:
             return False
 
-    def check_reroute(self) -> bool:
-        """Returns True if distance not in range of distance set in config """
-        if (self.distance_static - 1) <= self.distance_realtime <= (self.distance_static + 1):
-            return False
-        else:
-            return True
-
     def set_delay(self) -> str:
         """Set message when delay is True"""
         msg = (
@@ -61,16 +54,8 @@ class Alerting:
         )
         return msg
 
-    def set_reroute(self) -> str:
-        """Set message when reroute is True"""
-        msg = (
-            f"Reroute on route from {self.origin} to {self.destination} ({self.route_description}):%0A%0A"
-            f"New duration is {self.duration_realtime} minutes. "
-        )
-        return msg
-
     def set_clearing(self) -> str:
-        """Set message when delay or reroute alarms are cleared"""
+        """Set message when delay alarms are cleared"""
         msg = (
             f"Cleared alarms for {self.origin} to {self.destination} ({self.route_description}):%0A%0A"
             f"Duration is {self.duration_realtime} minutes. "

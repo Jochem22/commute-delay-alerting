@@ -1,9 +1,9 @@
 # Commute Delay Alerting
 
-This scripts monitors your commute set in config.yaml and sends alerts when there is a delay or reroute found on your
-route. Alerts are send once at start of delay or when reroute is detected. Final alert is send when delay or reroute is 
-cleared. The Telegram API is used to send the alerts. Waze API is used to calculate delays or reroutes on the specified 
-routes. I use this script to leave early when first delay alert is received or leave when all alerts are cleared to avoid 
+This scripts monitors your commute set in config.yaml and sends alerts when there is a delay found on your
+route. Alerts are send once at start of delay when delay is detected. Final alert is send when delay is 
+cleared. The Telegram API is used to send the alerts. Waze API is used to calculate delays on the specified 
+route. I use this script to leave early when first delay alert is received or leave when all alerts are cleared to avoid 
 traffic jams on my route. This keeps me from checking Waze or Google Maps for traffic jams manually.
 
 ![image](https://user-images.githubusercontent.com/25078202/222752347-b17420af-39b6-4843-9468-a9c8cc6f7d8f.png)
@@ -23,13 +23,24 @@ pip install -r requirements.txt
   - copy env_example to .env
   - [generate-telegram-token-for-bot-api](https://medium.com/geekculture/generate-telegram-token-for-bot-api-d26faf9bf064)
 - coordinates (lat,lon) of origin and destination
-  - Open google maps
+  - Open https://www.google.com/maps
   - Right-click on place or area on map
   - Left-click coordinates from pop-up window
+- distance of routes
+  - Open https://www.waze.com/live-map/
+  - Add starting point and destination using the coordinates from Google Maps
+    - starting point  'lat=xx.xxxxxxxxxxxxxx lng=x.xxxxxxxxxxxxxx'
+    - destination 'lat=xx.xxxxxxxxxxxxxx lng=x.xxxxxxxxxxxxxx'
+  - Copy distance of route you want to monitor
 - config.yaml
-  - copy and rename config_example.yaml
-  - read comments in config_example.yaml for details
+  - copy and rename config_example.yaml to config.yaml
   
 ## Usage
 
-Run main.py to start monitoring for delays or reroutes for your commute. 
+Add your routes in config.yaml and run main.py to start monitoring for delays for your commute.
+
+## NOTE
+
+Waze returns multiple routes when alternative routes are available. Distance from config file needs to match one of
+these routes. This will be the main route to monitor for delays. If no routes match, check the log file for all routes 
+Waze API returns, choose your main route and copy correct distance.

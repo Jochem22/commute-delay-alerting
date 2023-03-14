@@ -3,7 +3,7 @@ import requests
 
 class CalculateRoute:
     """
-    Class to fetch route information from Waze API used to calculate delay or reroute for commute.
+    Class to fetch route information from Waze API used to calculate delay for commute.
 
     Credits to kovacsbalu for the Waze API function: https://github.com/kovacsbalu/WazeRouteCalculator
 
@@ -19,16 +19,17 @@ class CalculateRoute:
         self.end_coords = end
 
     @staticmethod
-    def distance(results: list) -> int:
+    def distance(results: list) -> float:
         """Calculate distance that is the sum of length from every segment of route"""
         distance = 0
         for result in results:
             distance += result['length']
-        distance = int(distance / 1000.0)
+        distance = round(distance / 1000.0, 1)
         return distance
 
-    def get_route(self) -> dict:
-        """Get route information from Waze API"""
+    def all_routes(self) -> dict:
+        """Get all routes information from Waze API including alternatives"""
+        all_routes = {}
         url = "https://www.waze.com/row-RoutingManager/routingRequest"
         headers = {
             "User-Agent": "Mozilla/5.0",
@@ -51,24 +52,16 @@ class CalculateRoute:
             if "error" not in response.text:
                 response_json = response.json()
                 response_dict = response_json['alternatives']
-                return response_dict
+                for route in response_dict:
+                    route_description = route['response']['routeName']
+                    results = route['response']['results']
+                    distance_realtime = self.distance(results)
+                    all_routes[route_description] = {
+                        "duration_realtime": round(route['response']['totalRouteTime'] / 60, 2),
+                        "distance_realtime": distance_realtime
+                    }
+                return all_routes
             else:
                 raise Exception(response.text)
         else:
             raise Exception(response.status_code)
-
-    def calc_route(self) -> [int, int, str]:
-        """Returns route information"""
-        routes = {}
-        routes_info = self.get_route()
-        for route in routes_info:
-            route_description = route['response']['routeName']
-            duration_realtime = route['response']['totalRouteTime']
-            duration_realtime = int(duration_realtime / 60)
-            results = route['response']['results']
-            distance_realtime = self.distance(results)
-            routes[route_description] = {
-                "duration_realtime": duration_realtime,
-                "distance_realtime": distance_realtime,
-            }
-        return routes
