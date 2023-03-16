@@ -26,3 +26,12 @@ class Logger:
     @staticmethod
     def error(error):
         logging.error(error)
+
+
+def match_closest_distance(dct, nmbr):
+    lst = []
+    for key, value in dct.items():
+        key1 = list(value.keys())
+        key1 = key1[1]
+        lst.append(value[key1])
+    return lst[min(range(len(lst)), key=lambda i: abs(lst[i] - nmbr))]

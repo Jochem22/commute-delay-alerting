@@ -2,6 +2,7 @@
 from utils import Logger
 from calculateroute import CalculateRoute
 from alerting import Alerting
+from utils import match_closest_distance
 import datetime
 import time
 import yaml
@@ -44,9 +45,10 @@ def main():
                         get_routes = CalculateRoute(start, end)
                         all_routes = get_routes.all_routes()
                         LOGGER.debug(all_routes)
+                        distance_to_match = match_closest_distance(all_routes, distance_static)
                         for route_description in all_routes:
                             distance_realtime = all_routes[route_description]["distance_realtime"]
-                            if distance_realtime == distance_static:
+                            if distance_realtime == distance_to_match:
                                 LOGGER.info(f"Route found for {origin} to {destination} via {route_description}")
                                 duration_realtime = all_routes[route_description]["duration_realtime"]
                                 duration_delay = duration_realtime - duration_static
