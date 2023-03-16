@@ -1,8 +1,7 @@
 #! /usr/bin/env python3
-from utils import Logger
+from utils import Logger, match_closest_distance
 from calculateroute import CalculateRoute
 from alerting import Alerting
-from utils import match_closest_distance
 import datetime
 import time
 import yaml
@@ -80,7 +79,7 @@ def main():
                                     except Exception as e:
                                         LOGGER.error(e)
                                 else:
-                                    LOGGER.info(f"No delay found for for {origin} to {destination}")
+                                    LOGGER.info(f"No delays")
                     else:
                         LOGGER.info(f"Nothing to monitor. "
                                     f"Start monitoring at {departure_time - datetime.timedelta(hours=4)}")
