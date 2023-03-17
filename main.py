@@ -2,7 +2,7 @@
 from utils import Logger, match_closest_distance
 from calculateroute import CalculateRoute
 from alerting import Alerting
-import datetime
+from datetime import datetime, timedelta
 import time
 import yaml
 
@@ -11,78 +11,77 @@ with open('config.yaml') as f:
 LOGGER = Logger()
 
 
-def main():
+def check_if_monitor(departure_time) -> bool:
+    if datetime.now() < departure_time:
+        if departure_time - datetime.now() < timedelta(hours=4):
+            return True
+        else:
+            LOGGER.info(f"Nothing to monitor. Start monitoring at {departure_time - timedelta(hours=4)}")
+            return False
+    else:
+        return False
+
+
+def main() -> None:
     """
     Check commute for delays
     """
-    delay_notified = False
-    clear_notified = False
+    delay_notified: bool = False
+    clear_notified: bool = False
+    previous_duration_delay = 0
     while True:
-        for routes in CONFIG["routes"]:
-            commute = CONFIG["routes"][routes]
-            max_delay = CONFIG["settings"]["max_delay"]
-            send_updates = CONFIG["settings"]["send_updates"]
-            date = datetime.datetime.now().strftime('%d-%m-%Y')
-            departure_time = commute['departure']
-            departure_time = f"{date} {departure_time}"
-            departure_time = datetime.datetime.strptime(departure_time, '%d-%m-%Y %H:%M') + datetime.timedelta(hours=2)
-            weekday = datetime.datetime.today().weekday()
-            if weekday in commute["days"]:
-                if datetime.datetime.now() < departure_time:
-                    if departure_time - datetime.datetime.now() < datetime.timedelta(hours=4):
-                        origin = commute["origin"]
-                        destination = commute["destination"]
-                        distance_static = commute['distance']
-                        duration_static = commute['duration']
-                        lat = CONFIG["places"][origin]['lat']
-                        lon = CONFIG["places"][origin]['lon']
-                        start = f"x:{lon} y:{lat}"
-                        lat = CONFIG["places"][destination]['lat']
-                        lon = CONFIG["places"][destination]['lon']
-                        end = f"x:{lon} y:{lat}"
-                        LOGGER.info(f"Started monitoring route {origin} ({start}) to {destination} ({end})")
-                        get_routes = CalculateRoute(start, end)
-                        all_routes = get_routes.all_routes()
-                        LOGGER.debug(all_routes)
-                        distance_to_match = match_closest_distance(all_routes, distance_static)
-                        for route_description in all_routes:
-                            distance_realtime = all_routes[route_description]["distance_realtime"]
-                            if distance_realtime == distance_to_match:
-                                LOGGER.info(f"Route found for {origin} to {destination} via {route_description}")
-                                duration_realtime = all_routes[route_description]["duration_realtime"]
-                                duration_delay = duration_realtime - duration_static
-                                alerting = Alerting(
-                                    max_delay,
-                                    origin,
-                                    destination,
-                                    duration_realtime,
-                                    duration_delay,
-                                    distance_static,
-                                    distance_realtime,
-                                    route_description
-                                )
-                                delay = Alerting.check_delay(alerting)
-                                msg = None
-                                if delay is True and delay_notified is False:
-                                    delay_notified = True
-                                    clear_notified = True
-                                    msg = Alerting.set_delay(alerting)
-                                elif clear_notified is True and delay is False:
-                                    delay_notified = False
-                                    clear_notified = False
-                                    msg = Alerting.set_clearing(alerting)
-                                elif delay_notified is True and send_updates is True:
-                                    msg = Alerting.set_update(alerting)
-                                if msg:
-                                    try:
-                                        Alerting.send_alert(msg)
-                                    except Exception as e:
-                                        LOGGER.error(e)
-                                else:
-                                    LOGGER.info(f"No delays")
-                    else:
-                        LOGGER.info(f"Nothing to monitor. "
-                                    f"Start monitoring at {departure_time - datetime.timedelta(hours=4)}")
+        routes = CONFIG["routes"]
+        settings = CONFIG["settings"]
+        places = CONFIG["places"]
+        max_delay = settings["max_delay"]
+        send_updates = settings["send_updates"]
+        for route, commute in routes.items():
+            departure_time = datetime.now().strftime('%d-%m-%Y ') + commute['departure']
+            departure_time = datetime.strptime(departure_time, '%d-%m-%Y %H:%M') + timedelta(hours=2)
+            if datetime.today().weekday() in commute["days"] and check_if_monitor(departure_time):
+                origin, destination = commute["origin"], commute["destination"]
+                distance_static, duration_static = commute['distance'], commute['duration']
+                start = f"x:{places[origin]['lon']} y:{places[origin]['lat']}"
+                end = f"x:{places[destination]['lon']} y:{places[destination]['lat']}"
+                LOGGER.info(f"Started monitoring route {origin} ({start}) to {destination} ({end})")
+                get_routes = CalculateRoute(start, end)
+                all_routes = get_routes.all_routes()
+                LOGGER.debug(all_routes)
+                distance_to_match = match_closest_distance(all_routes, distance_static)
+                for route_description in all_routes:
+                    distance_realtime = all_routes[route_description]["distance_realtime"]
+                    if distance_realtime == distance_to_match:
+                        LOGGER.info(f"Route found for {origin} to {destination} via {route_description}")
+                        duration_realtime = all_routes[route_description]["duration_realtime"]
+                        duration_delay = round(duration_realtime - duration_static, 2)
+                        alerting = Alerting(
+                            max_delay,
+                            origin,
+                            destination,
+                            duration_realtime,
+                            duration_delay,
+                            distance_static,
+                            distance_realtime,
+                            route_description
+                        )
+                        delay = Alerting.check_delay(alerting)
+                        msg = None
+                        if delay and not delay_notified:
+                            delay_notified = clear_notified = True
+                            msg = Alerting.set_delay(alerting)
+                        elif clear_notified and not delay:
+                            delay_notified = clear_notified = False
+                            msg = Alerting.set_clearing(alerting)
+                        elif delay_notified and send_updates:
+                            print(duration_delay, previous_duration_delay)
+                            if duration_delay < previous_duration_delay:
+                                msg = Alerting.set_update(alerting)
+                        if msg:
+                            try:
+                                Alerting.send_alert(msg)
+                            except Exception as e:
+                                LOGGER.error(e)
+                        previous_duration_delay = duration_delay
         time.sleep(300)
 
 

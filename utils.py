@@ -29,9 +29,5 @@ class Logger:
 
 
 def match_closest_distance(dct, nmbr):
-    lst = []
-    for key, value in dct.items():
-        key1 = list(value.keys())
-        key1 = key1[1]
-        lst.append(value[key1])
+    lst = [list(value.values())[1] for value in dct.values()]
     return lst[min(range(len(lst)), key=lambda i: abs(lst[i] - nmbr))]
