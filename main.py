@@ -73,7 +73,6 @@ def main() -> None:
                             delay_notified = clear_notified = False
                             msg = Alerting.set_clearing(alerting)
                         elif delay_notified and send_updates:
-                            print(duration_delay, previous_duration_delay)
                             if duration_delay < previous_duration_delay:
                                 msg = Alerting.set_update(alerting)
                         if msg:
