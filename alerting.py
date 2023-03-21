@@ -76,8 +76,8 @@ class Alerting:
         token = SECRET["TOKEN"]
         chat_id = SECRET["CHATID"]
         url = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={msg}"
-        try:
-            request = requests.get(url).json()
-            LOGGER.info(request)
-        except:
-            raise Exception("error sending telegram message")
+        request = requests.get(url)
+        if request.status_code() == 200:
+            LOGGER.debug(request.text)
+        else:
+            raise requests.exceptions.HTTPError("error sending telegram message")
