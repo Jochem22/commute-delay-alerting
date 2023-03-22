@@ -84,8 +84,6 @@ def main() -> None:
                         previous_duration_delay = duration_delay
                     else:
                         LOGGER.info("No route found to monitor.")
-            else:
-                LOGGER.info(f"Nothing to monitor.")
         time.sleep(300)
 
 
