@@ -62,6 +62,6 @@ class CalculateRoute:
                     }
                 return all_routes
             else:
-                raise Exception(response.text)
+                raise requests.exceptions.HTTPError(response.text)
         else:
-            raise Exception(response.status_code)
+            raise requests.exceptions.HTTPError(response.status_code)

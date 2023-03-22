@@ -11,13 +11,11 @@ with open('config.yaml') as f:
 LOGGER = Logger()
 
 
-def check_if_monitor(departure_time) -> bool:
-    if datetime.now() < departure_time:
-        if departure_time - datetime.now() < timedelta(hours=4):
-            return True
-        else:
-            LOGGER.info(f"Nothing to monitor. Start monitoring at {departure_time - timedelta(hours=4)}")
-            return False
+def check_if_monitor(departure_time, commute_days) -> bool:
+    if datetime.today().weekday() in commute_days:
+        if datetime.now() < departure_time:
+            if departure_time - datetime.now() < timedelta(hours=4):
+                return True
     else:
         return False
 
@@ -38,7 +36,8 @@ def main() -> None:
         for route, commute in routes.items():
             departure_time = datetime.now().strftime('%d-%m-%Y ') + commute['departure']
             departure_time = datetime.strptime(departure_time, '%d-%m-%Y %H:%M') + timedelta(hours=2)
-            if datetime.today().weekday() in commute["days"] and check_if_monitor(departure_time):
+            commute_days = commute["days"]
+            if check_if_monitor(departure_time, commute_days):
                 origin, destination = commute["origin"], commute["destination"]
                 distance_static, duration_static = commute['distance'], commute['duration']
                 start = f"x:{places[origin]['lon']} y:{places[origin]['lat']}"
@@ -80,7 +79,13 @@ def main() -> None:
                                 Alerting.send_alert(msg)
                             except Exception as e:
                                 LOGGER.error(e)
+                        else:
+                            LOGGER.info("No delays for route.")
                         previous_duration_delay = duration_delay
+                    else:
+                        LOGGER.info("No route found to monitor.")
+            else:
+                LOGGER.info(f"Nothing to monitor.")
         time.sleep(300)
 
 

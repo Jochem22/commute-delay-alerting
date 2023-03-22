@@ -14,7 +14,7 @@
        - 0 # 0 = monday, 6 = sunday
        - 2
        - 3
-     departure: '08:00' # script monitors route from 2 hours before and 2 hours after departure time
+     departure: '08:00' # script monitors route 2 hours before and 2 hours after departure time
      distance: 37 # distance of original route without reroutes taken from https://www.waze.com/live-map/
      duration: 32 # duration of route without traffic taken from https://www.waze.com/live-map/
    routeb:
@@ -28,5 +28,5 @@
      distance: 37
      duration: 31
  settings:
-   max_delay: 5 # threshold in minutes to send delay alert
-   send_updates: False # send update if delay is getting shorter
+   max_delay: 5 # threshold in minutes for max delay time
+   send_updates: False # send updates if delay is getting shorter
