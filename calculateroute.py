@@ -47,9 +47,10 @@ class CalculateRoute:
             "subscription": "*",
             "options": 'AVOID_TRAILS:t,AVOID_TOLL_ROADS:t,AVOID_FERRIES:t',
         }
-        response = requests.get(url, params=params, headers=headers)
-        if response.status_code == 200:
-            if "error" not in response.text:
+        try:
+            response = requests.get(url, params=params, headers=headers)
+            response.raise_for_status()
+            if response.status_code == 200 and "error" not in response.text:
                 response_json = response.json()
                 response_dict = response_json['alternatives']
                 for route in response_dict:
@@ -62,6 +63,6 @@ class CalculateRoute:
                     }
                 return all_routes
             else:
-                raise requests.exceptions.HTTPError(response.text)
-        else:
-            raise requests.exceptions.HTTPError(response.status_code)
+                raise requests.exceptions.HTTPError()
+        except Exception as e:
+            raise requests.exceptions.RequestException(e)
