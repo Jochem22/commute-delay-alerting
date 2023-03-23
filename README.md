@@ -6,7 +6,9 @@ send the alerts. Waze API is used to calculate delays on the specified route. I 
 delay alert is received or leave when all alerts are cleared to avoid traffic jams on my route. This keeps me from 
 checking Waze or Google Maps for traffic jams manually.
 
+
 ![image](https://user-images.githubusercontent.com/25078202/222752347-b17420af-39b6-4843-9468-a9c8cc6f7d8f.png)
+
 
 ## Installation
 
