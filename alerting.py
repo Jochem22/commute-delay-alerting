@@ -26,10 +26,11 @@ class Alerting:
         distance of route in km's set in config
     distance_realtime : float
         distance of route in km's in real time used to check for matching route in config file
-    route_description : str
+    description : str
         short description of route
     """
-    def __init__(self, max_delay, origin, destination, duration_realtime, duration_delay, distance_static, distance_realtime, route_description):
+    def __init__(self, name, max_delay, origin, destination, duration_realtime, duration_delay, distance_static, distance_realtime, description):
+        self.name = name
         self.max_delay = max_delay
         self.origin = origin
         self.destination = destination
@@ -37,7 +38,7 @@ class Alerting:
         self.duration_delay = duration_delay
         self.distance_static = distance_static
         self.distance_realtime = distance_realtime
-        self.route_description = route_description
+        self.description = description
 
     def check_delay(self) -> bool:
         """Returns True if total delay in minutes exceeds max delay in minutes set in config"""
@@ -49,7 +50,7 @@ class Alerting:
     def set_delay(self) -> str:
         """Set message when delay is True"""
         msg = (
-            f"Delay on route from {self.origin} to {self.destination} ({self.route_description}):%0A%0A"
+            f"Delay on route from {self.origin} to {self.destination} ({self.description}):%0A%0A"
             f"Current duration is {self.duration_realtime} minutes with {self.duration_delay} minutes delay. "
         )
         return msg
@@ -57,7 +58,7 @@ class Alerting:
     def set_clearing(self) -> str:
         """Set message when delay alarms are cleared"""
         msg = (
-            f"Cleared alarms for {self.origin} to {self.destination} ({self.route_description}):%0A%0A"
+            f"Cleared alarms for {self.origin} to {self.destination} ({self.description}):%0A%0A"
             f"Duration is {self.duration_realtime} minutes. "
         )
         return msg

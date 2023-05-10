@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Route Places</title>
+  </head>
+  <body>
+    <h1>Route Places</h1>
+    <ul>
+      <li><a href="{{ url_for('index') }}">Go to Main Page</a></li>
+      <li><a href="{{ url_for('route_configs') }}">Go to Route Configs</a></li>
+      <li><a href="{{ url_for('route_places') }}">Go to Route Places</a></li>
+      <li><a href="{{ url_for('route_data') }}">Go to Route Data</a></li>
+    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Latitude</th>
+          <th>Longitude</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for place in configs %}
+          <tr>
+            <td>{{ place.name }}</td>
+            <td>{{ place.lat }}</td>
+            <td>{{ place.lon }}</td>
+            <td><a href="/delete_route_place?name={{ place.name }}">Delete</a></td>
+            <td><a href="/edit_route_place?name={{ place.name }}">Edit</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <form method="POST" action="/add_route_place">
+      <label>Name:</label>
+      <input type="text" name="name"><br>
+
+      <label>Latitude:</label>
+      <input type="text" name="lat"><br>
+
+      <label>Longitude:</label>
+      <input type="text" name="lon"><br>
+
+      <input type="submit" value="Add Route Place">
+  </form>
+  </body>
+</html>

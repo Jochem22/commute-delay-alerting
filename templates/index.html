@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Route Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Route Chart</h1>
+    <ul>
+      <li><a href="{{ url_for('index') }}">Go to Main Page</a></li>
+      <li><a href="{{ url_for('route_configs') }}">Go to Route Configs</a></li>
+      <li><a href="{{ url_for('route_places') }}">Go to Route Places</a></li>
+      <li><a href="{{ url_for('route_data') }}">Go to Route Data</a></li>
+    </ul>
+    <br>
+    <div style="width: 50%">
+    <canvas id="myChart"></canvas>
+    </div>
+    <script>
+        // get the data from the Flask server
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                // create a chart with the data
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.routea.map(d => d.ts),
+                        datasets: [
+                            {
+                                label: 'Utrecht to Amsterdam',
+                                data: data.routea.map(d => d.duration_realtime),
+                                fill: false,
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Amsterdam to Utrecht',
+                                data: data.routeb.map(d => d.duration_realtime),
+                                fill: false,
+                                borderColor: 'rgb(255, 99, 132)',
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                    }
+                });
+            });
+    </script>
+</body>
+</html>
