@@ -2,7 +2,8 @@
 
 This scripts monitors your commute and sends alerts when there is a delay found on your route. Alert is send once at 
 start of delay and a final alert is send when delay is cleared. The Telegram API is used to send the alerts. Waze API is 
-used to calculate delays on the specified routes. This project is mainly used for learning purposes. 
+used to calculate delays on the specified routes. Flask is used to view the route data and edit the configuration.
+This project is mainly used for learning purposes. 
 
 
 ![image](https://user-images.githubusercontent.com/25078202/222752347-b17420af-39b6-4843-9468-a9c8cc6f7d8f.png)
@@ -34,9 +35,10 @@ pip install -r requirements.txt
   
 ## Usage
 
-When you use this tool for the first time run db.py to create a database with sample configuration. Then run 
-check_routes.py to fill the database with route data every 5 minutes. Finally run app.py to view the data and edit the 
-configuration from your browser. You need to restart check_routes.py everytime you make changes to the configuration.
+When using this tool for the first time, start by running app.py to create the database. Then you can view and edit the 
+configuration from your browser. After making any change to the configuration run check_routes.py to monitor your commute 
+every 5 minutes and populate the database with route data. Remember to restart check_routes.py after each configuration 
+change.
 
 ## NOTE
 

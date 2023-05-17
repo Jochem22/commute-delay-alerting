@@ -1,4 +1,3 @@
-#! /usr/bin/env python3
 from sqlalchemy import create_engine, Column, Integer, String, Float, Time, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import Session, relationship, declarative_base
 import datetime
@@ -98,8 +97,7 @@ def save_route_data(data):
     session.close()
 
 
-if __name__ == "__main__":
-    # create database and set example data
+def create_db():
     BASE.metadata.create_all(ENGINE)
     save_settings()
     save_places()

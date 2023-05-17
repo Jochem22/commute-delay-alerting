@@ -1,15 +1,18 @@
 from flask import Flask, render_template, jsonify, request, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db import RouteConfig, RoutePlaces, RouteData
+from sqlalchemy_utils import database_exists
+from db import RouteConfig, RoutePlaces, RouteData, create_db
 from datetime import datetime, date, timedelta, time
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///routes.db')
-Session = sessionmaker(bind=engine)
-session = Session()
-
+if database_exists('sqlite:///routes.db'):
+    engine = create_engine('sqlite:///routes.db')
+    Session = sessionmaker(bind=engine)
+    session = Session()
+else:
+    create_db()
 
 @app.route('/')
 def index():
