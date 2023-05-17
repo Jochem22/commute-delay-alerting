@@ -5,7 +5,8 @@ class CalculateRoute:
     """
     Class to fetch route information from Waze API used to calculate delay for commute.
 
-    Credits to kovacsbalu for the Waze API function: https://github.com/kovacsbalu/WazeRouteCalculator
+    Credits to kovacsbalu for the Waze API function:
+    https://github.com/kovacsbalu/WazeRouteCalculator
 
     Attributes
     ----------
@@ -48,7 +49,7 @@ class CalculateRoute:
             "options": 'AVOID_TRAILS:t,AVOID_TOLL_ROADS:t,AVOID_FERRIES:t',
         }
         try:
-            response = requests.get(url, params=params, headers=headers)
+            response = requests.get(url, params=params, headers=headers, timeout=10)
             response.raise_for_status()
             if response.status_code == 200 and "error" not in response.text:
                 response_json = response.json()
@@ -62,7 +63,6 @@ class CalculateRoute:
                         "distance_realtime": distance_realtime
                     }
                 return all_routes
-            else:
-                raise requests.exceptions.HTTPError()
-        except Exception as e:
-            raise requests.exceptions.RequestException(e)
+            raise requests.exceptions.HTTPError()
+        except Exception as error:
+            raise requests.exceptions.RequestException(error)
