@@ -1,14 +1,11 @@
 #! /usr/bin/env python3
-from utils import Logger, match_closest_distance
+from utils import Logger, match_closest_distance, get_config
 from calculateroute import CalculateRoute
 from alerting import Alerting
 from datetime import datetime, timedelta
 from db import save_route_data
 import time
-import yaml
 
-with open('config.yaml', encoding='utf8') as f:
-    CONFIG = yaml.load(f, Loader=yaml.FullLoader)
 LOGGER = Logger()
 
 
@@ -23,7 +20,7 @@ def check_if_alert(departure_time, commute_days) -> bool:
     return False
 
 
-def main() -> None:
+def check_routes() -> None:
     """
     Check commute for delays
     """
@@ -32,11 +29,12 @@ def main() -> None:
     previous_duration_delay = 0
     while True:
         if datetime.now().minute % 5 == 0:
-            places = CONFIG["places"]
-            max_delay = CONFIG["settings"]["max_delay"]
-            send_updates = CONFIG["settings"]["send_updates"]
-            for name, commute in CONFIG["routes"].items():
-                departure_time = datetime.now().strftime('%d-%m-%Y ') + commute['departure']
+            places_config, routes_config, settings_config = get_config()
+            places = places_config
+            max_delay = settings_config["max_delay"]
+            send_updates = settings_config["send_updates"]
+            for name, commute in routes_config.items():
+                departure_time = datetime.now().strftime('%d-%m-%Y ') + str(commute['departure'].strftime('%H:%M'))
                 departure_time = datetime.strptime(departure_time, '%d-%m-%Y %H:%M') + timedelta(hours=2)
                 origin, destination = commute["origin"], commute["destination"]
                 start = f"x:{places[origin]['lon']} y:{places[origin]['lat']}"
@@ -62,7 +60,8 @@ def main() -> None:
                             description
                         )
                         save_route_data([alerting.__dict__])
-                        if check_if_alert(departure_time, commute["days"]):
+                        comute_days = [day for day in commute["days"]]
+                        if check_if_alert(departure_time, comute_days):
                             delay = Alerting.check_delay(alerting)
                             msg = None
                             if delay and not delay_notified:
@@ -86,4 +85,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    check_routes()

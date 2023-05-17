@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 from sqlalchemy import create_engine, Column, Integer, String, Float, Time, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import Session, relationship, declarative_base
 import datetime
@@ -53,10 +54,9 @@ class Settings(BASE):
 
 
 def save_places():
-    # Add sample data
     data = [
-        {'name': 'utrecht', 'lat': 52.11805947320983, 'lon': 5.02638342275991},
-        {'name': 'amsterdam', 'lat': 52.3676122873359, 'lon': 4.901130197765845},
+        {'name': 'bunnik', 'lat': 52.06651312346889, 'lon': 5.200712866366981},
+        {'name': 'velp', 'lat': 51.99434786729042, 'lon': 5.977638717676888},
     ]
     session = Session(bind=ENGINE)
     for places in data:
@@ -75,12 +75,11 @@ def save_settings():
 
 
 def save_route_config():
-    # Add sample data
     data = [
-        {'name': 'routea', 'origin_name': 'utrecht', 'destination_name': 'amsterdam', 'departure': datetime.time(hour=17, minute=30, second=0),
-         'distance': 38, 'duration': 30, 'days': '012345'},
-        {'name': 'routeb', 'origin_name': 'amsterdam', 'destination_name': 'utrecht', 'departure': datetime.time(hour=8, minute=30, second=0),
-         'distance': 36, 'duration': 29, 'days': '012345'},
+        {'name': 'routea', 'origin_name': 'bunnik', 'destination_name': 'velp', 'departure': datetime.time(hour=17, minute=30, second=0),
+         'distance': 60.2, 'duration': 43, 'days': '012345'},
+        {'name': 'routeb', 'origin_name': 'velp', 'destination_name': 'bunnik', 'departure': datetime.time(hour=8, minute=30, second=0),
+         'distance': 58.8, 'duration': 43, 'days': '012345'},
     ]
     session = Session(bind=ENGINE)
     for route_config in data:
@@ -99,8 +98,9 @@ def save_route_data(data):
     session.close()
 
 
-# create database and set example data
-# BASE.metadata.create_all(ENGINE)
-# save_settings()
-# save_places()
-# save_route_config()
+if __name__ == "__main__":
+    # create database and set example data
+    BASE.metadata.create_all(ENGINE)
+    save_settings()
+    save_places()
+    save_route_config()
