@@ -2,8 +2,8 @@
 
 This scripts monitors your commute and sends alerts when there is a delay found on your route. Alert is send once at 
 start of delay and a final alert is send when delay is cleared. The Telegram API is used to send the alerts. Waze API is 
-used to calculate delays on the specified routes. Flask is used to view the route data and edit the configuration.
-This project is mainly used for learning purposes. 
+used to calculate delays on the specified routes. SQLite and SQLAlchemy is used to store configuration and route data.
+Flask is used to view the route data and edit the configuration. This project is mainly used for learning purposes. 
 
 
 ![image](https://user-images.githubusercontent.com/25078202/222752347-b17420af-39b6-4843-9468-a9c8cc6f7d8f.png)
