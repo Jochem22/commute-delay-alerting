@@ -22,42 +22,35 @@ class Alerting:
         duration of route in real time including traffic jams
     duration_delay : float
         total delay of route in minutes in real time used to check for delay
-    distance_static : float
-        distance of route in km's set in config
-    distance_realtime : float
-        distance of route in km's in real time used to check for matching route in config file
-    route_description : str
+    description : str
         short description of route
     """
-    def __init__(self, max_delay, origin, destination, duration_realtime, duration_delay, distance_static, distance_realtime, route_description):
+    def __init__(self, name, max_delay, origin, destination, duration_realtime, duration_delay, description):
+        self.name = name
         self.max_delay = max_delay
         self.origin = origin
         self.destination = destination
         self.duration_realtime = duration_realtime
         self.duration_delay = duration_delay
-        self.distance_static = distance_static
-        self.distance_realtime = distance_realtime
-        self.route_description = route_description
+        self.description = description
 
     def check_delay(self) -> bool:
         """Returns True if total delay in minutes exceeds max delay in minutes set in config"""
-        if self.duration_delay >= self.max_delay:
-            return True
-        else:
-            return False
+        return bool(self.duration_delay >= self.max_delay)
 
     def set_delay(self) -> str:
         """Set message when delay is True"""
         msg = (
-            f"Delay on route from {self.origin} to {self.destination} ({self.route_description}):%0A%0A"
-            f"Current duration is {self.duration_realtime} minutes with {self.duration_delay} minutes delay. "
+            f"Delay on route from {self.origin} to {self.destination} ({self.description}):%0A%0A"
+            f"Current duration is {self.duration_realtime} minutes with "
+            f"{self.duration_delay} minutes delay. "
         )
         return msg
 
     def set_clearing(self) -> str:
         """Set message when delay alarms are cleared"""
         msg = (
-            f"Cleared alarms for {self.origin} to {self.destination} ({self.route_description}):%0A%0A"
+            f"Cleared alarms for {self.origin} to {self.destination} ({self.description}):%0A%0A"
             f"Duration is {self.duration_realtime} minutes. "
         )
         return msg
@@ -76,8 +69,8 @@ class Alerting:
         token = SECRET["TOKEN"]
         chat_id = SECRET["CHATID"]
         url = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={msg}"
-        request = requests.get(url)
-        if request.status_code() == 200:
+        request = requests.get(url, timeout=10)
+        if request.status_code == 200:
             LOGGER.debug(request.text)
         else:
             raise requests.exceptions.HTTPError("error sending telegram message")

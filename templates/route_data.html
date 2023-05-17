@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Route Data</title>
+  </head>
+  <body>
+    <h1>Route Data</h1>
+    <ul>
+      <li><a href="{{ url_for('index') }}">Go to Main Page</a></li>
+      <li><a href="{{ url_for('route_configs') }}">Go to Route Configs</a></li>
+      <li><a href="{{ url_for('route_places') }}">Go to Route Places</a></li>
+      <li><a href="{{ url_for('route_data') }}">Go to Route Data</a></li>
+    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Name</th>
+          <th>Origin</th>
+          <th>Destination</th>
+          <th>Description</th>
+          <th>Duration Realtime</th>
+          <th>Duration Delay</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in configs %}
+          <tr>
+            <td>{{ data.ts }}</td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.origin }}</td>
+            <td>{{ data.destination }}</td>
+            <td>{{ data.description }}</td>
+            <td>{{ data.duration_realtime }}</td>
+            <td>{{ data.duration_delay }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

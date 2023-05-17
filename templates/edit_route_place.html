@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Route Place</title>
+</head>
+<body>
+<form action="/update_route_place" method="post">
+    <input type="hidden" name="name" value="{{ configs.name }}">
+
+    <label for="departure">Latitude:</label>
+    <input type="number" name="lat" value="{{ configs.lat }}">
+
+    <label for="distance">Longitude:</label>
+    <input type="number" name="lon" value="{{ configs.lon }}">
+
+    <button type="submit">Update</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Route Place</title>
+</head>
+<body>
+<form action="/update_route_config" method="post">
+    <input type="hidden" name="name" value="{{ configs.name }}">
+
+    <label for="origin_name">Origin:</label>
+    <select name="origin_name">
+        {% for place in places %}
+        <option value="{{ place.name }}" {% if place.name == configs.origin_name %}selected{% endif %}>{{ place.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="destination_name">Destination:</label>
+    <select name="destination_name">
+        {% for place in places %}
+        <option value="{{ place.name }}" {% if place.name == configs.destination_name %}selected{% endif %}>{{ place.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="departure">Departure:</label>
+    <input type="time" name="departure" value="{{ configs.departure }}">
+
+    <label for="distance">Distance:</label>
+    <input type="number" name="distance" value="{{ configs.distance }}">
+
+    <label for="duration">Duration:</label>
+    <input type="number" name="duration" value="{{ configs.duration }}">
+
+    <label for="days">Days:</label>
+    <input type="text" name="days" value="{{ configs.days }}">
+
+    <button type="submit">Update</button>
+</form>
+</body>
+</html>
