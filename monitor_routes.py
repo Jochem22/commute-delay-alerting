@@ -13,7 +13,7 @@ def check_if_alert(departure_time, commute_days) -> bool:
     """
     Check if alert should be send or not
     """
-    if datetime.today().weekday() in commute_days:
+    if str(datetime.today().weekday()) in commute_days:
         if datetime.now() < departure_time:
             return bool(departure_time - datetime.now() < timedelta(hours=4))
         return False
