@@ -1,5 +1,6 @@
 .env
 main.log
 *.log.*
+*.db
 config.yaml
 __pycache__/
