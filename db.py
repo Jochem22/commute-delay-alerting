@@ -78,7 +78,7 @@ def save_route_config():
         {'name': 'routea', 'origin_name': 'bunnik', 'destination_name': 'velp', 'departure': datetime.time(hour=17, minute=30, second=0),
          'distance': 60.2, 'duration': 43, 'days': '012345'},
         {'name': 'routeb', 'origin_name': 'velp', 'destination_name': 'bunnik', 'departure': datetime.time(hour=8, minute=30, second=0),
-         'distance': 58.8, 'duration': 43, 'days': '012345'},
+         'distance': 58.8, 'duration': 40, 'days': '012345'},
     ]
     session = Session(bind=ENGINE)
     for route_config in data:
